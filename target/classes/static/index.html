@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | EduSystem</title>
+  <meta name="description" content="Dashboard do sistema de gestão escolar - frequência e desempenho dos alunos">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ── Filtro bar ─────────────────────────────────── */
+    .filter-bar {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+    }
+    .filter-group { display:flex; flex-direction:column; gap:6px; }
+    .filter-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+    .period-btns  { display:flex; gap:4px; flex-wrap:wrap; }
+    .btn-period {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-muted);
+      font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-period:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-period.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .custom-dates { display:flex; gap:8px; align-items:center; margin-top:6px; }
+    .custom-dates input[type=date] {
+      background:var(--surface); border:1px solid var(--border); border-radius:6px;
+      color:var(--text); padding:5px 10px; font-size:13px;
+    }
+    .filter-select { min-width:170px; }
+    .filter-divider { width:1px; background:var(--border); align-self:stretch; margin: 0 4px; }
+
+    /* ── Badges situação ────────────────────────────── */
+    .badge-success { background:rgba(16,185,129,.15); color:#10b981; }
+    .badge-warning { background:rgba(245,158,11,.15);  color:#f59e0b; }
+    .badge-danger  { background:rgba(239,68,68,.15);   color:#ef4444; }
+    .badge-gray    { background:rgba(100,116,139,.15); color:#94a3b8; }
+    .badge-purple  { background:rgba(139,92,246,.15);  color:#8b5cf6; }
+    .badge-info    { background:rgba(59,130,246,.15);  color:#3b82f6; }
+
+    /* ── Seções de análise ──────────────────────────── */
+    .analysis-section {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:20px;
+      margin-bottom:24px;
+      animation: fadeIn .3s ease;
+    }
+    .analysis-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);
+    }
+    .analysis-title { font-size:16px; font-weight:700; }
+    .analysis-subtitle { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+    /* ── Tabela de análise ──────────────────────────── */
+    .analysis-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .analysis-table th {
+      text-align:left; padding:8px 12px;
+      background:var(--surface-2); color:var(--text-muted);
+      font-size:11px; font-weight:700; text-transform:uppercase;
+      border-bottom:1px solid var(--border);
+    }
+    .analysis-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    .analysis-table tr:last-child td { border-bottom:none; }
+    .analysis-table tr:hover td { background:var(--surface-2); }
+
+    /* ── Mini barra de progresso ──────────────────────*/
+    .mini-prog { background:var(--surface-2); border-radius:4px; height:6px; width:100px; overflow:hidden; }
+    .mini-prog-fill { height:100%; border-radius:4px; transition: width .4s ease; }
+    .mini-prog-fill.green  { background:#10b981; }
+    .mini-prog-fill.yellow { background:#f59e0b; }
+    .mini-prog-fill.red    { background:#ef4444; }
+
+    /* ── Notas chip ─────────────────────────────────── */
+    .notas-list { display:flex; gap:4px; flex-wrap:wrap; }
+    .nota-chip {
+      display:inline-flex; align-items:center; gap:3px;
+      padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700;
+    }
+    .nota-chip.ok   { background:rgba(16,185,129,.15); color:#10b981; }
+    .nota-chip.warn { background:rgba(245,158,11,.15);  color:#f59e0b; }
+    .nota-chip.bad  { background:rgba(239,68,68,.15);   color:#ef4444; }
+
+    /* ── Accordions para expandir linhas ────────────── */
+    .expand-btn { background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:14px; padding:2px 6px; border-radius:4px; }
+    .expand-btn:hover { background:var(--surface-2); color:var(--text); }
+    .sub-row { background:var(--surface-2) !important; display:none; }
+    .sub-row.open { display:table-row; }
+    .sub-table { width:100%; font-size:12px; border-collapse:collapse; }
+    .sub-table td { padding:6px 12px; border-bottom:1px solid rgba(255,255,255,.04); }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+    .hidden { display:none !important; }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">📊 Dashboard</div>
+        <div class="topbar-subtitle" id="current-date"></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="loadDashboard()">🔄 Atualizar</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ── BARRA DE FILTROS ─────────────────────────────────────── -->
+      <div class="filter-bar">
+
+        <!-- Período -->
+        <div class="filter-group">
+          <div class="filter-label">📅 Período</div>
+          <div class="period-btns">
+            <button class="btn-period active" data-periodo="all"      onclick="setPeriodo('all')">Todo período</button>
+            <button class="btn-period"         data-periodo="month"    onclick="setPeriodo('month')">Este mês</button>
+            <button class="btn-period"         data-periodo="semester" onclick="setPeriodo('semester')">Este semestre</button>
+            <button class="btn-period"         data-periodo="year"     onclick="setPeriodo('year')">Este ano</button>
+            <button class="btn-period"         data-periodo="custom"   onclick="setPeriodo('custom')">Personalizado</button>
+          </div>
+          <div class="custom-dates hidden" id="custom-dates">
+            <input type="date" id="data-inicio" onchange="aplicarCustom()">
+            <span style="color:var(--text-muted)">até</span>
+            <input type="date" id="data-fim" onchange="aplicarCustom()">
+          </div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- Turma -->
+        <div class="filter-group">
+          <div class="filter-label">🏫 Filtrar por Turma</div>
+          <select class="form-control filter-select" id="filtro-turma" onchange="setFiltroTurma(this.value)">
+            <option value="">Todas as Turmas</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- Matéria -->
+        <div class="filter-group">
+          <div class="filter-label">📚 Filtrar por Matéria</div>
+          <select class="form-control filter-select" id="filtro-materia" onchange="setFiltroMateria(this.value)">
+            <option value="">Todas as Matérias</option>
+          </select>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <!-- Limpar -->
+        <div class="filter-group" style="justify-content:flex-end">
+          <div class="filter-label" style="visibility:hidden">_</div>
+          <button class="btn btn-outline btn-sm" onclick="limparFiltros()" title="Limpar todos os filtros">🔄 Limpar</button>
+        </div>
+
+      </div>
+
+      <!-- ── STAT CARDS ───────────────────────────────────────────── -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="spinner" style="margin:auto"></div></div>
+      </div>
+
+      <!-- ── CHARTS ROW ───────────────────────────────────────────── -->
+      <div class="grid-2 mb-3">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Frequência por Turma</div>
+              <div class="card-subtitle" id="sub-freq">Percentual médio de presença</div>
+            </div>
+          </div>
+          <div style="position:relative; height:220px;">
+            <canvas id="chartFrequencia"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Desempenho por Matéria</div>
+              <div class="card-subtitle" id="sub-desemp">Média de notas por matéria</div>
+            </div>
+          </div>
+          <div style="position:relative; height:220px;">
+            <canvas id="chartDesempenho"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANÁLISE POR TURMA (condicional) ─────────────────────── -->
+      <div id="secao-turma" class="hidden">
+        <div class="analysis-section">
+          <div class="analysis-header">
+            <div>
+              <div class="analysis-title">👥 Análise da Turma: <span id="turma-titulo"></span></div>
+              <div class="analysis-subtitle">Frequência e desempenho individual de cada aluno</div>
+            </div>
+            <a href="presencas.html" class="btn btn-outline btn-sm">Ver Presenças</a>
+          </div>
+          <div id="tabela-turma-wrapper">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANÁLISE POR MATÉRIA (condicional) ───────────────────── -->
+      <div id="secao-materia" class="hidden">
+        <div class="analysis-section">
+          <div class="analysis-header">
+            <div>
+              <div class="analysis-title">📚 Análise da Matéria: <span id="materia-titulo"></span></div>
+              <div class="analysis-subtitle">Notas individuais e desempenho de cada aluno</div>
+            </div>
+            <a href="desempenho.html" class="btn btn-outline btn-sm">Lançar Notas</a>
+          </div>
+          <div id="tabela-materia-wrapper">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ALUNOS EM RISCO ──────────────────────────────────────── -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">⚠️ Alunos com Baixa Frequência</div>
+            <div class="card-subtitle">Abaixo de 75% de presença</div>
+          </div>
+          <a href="presencas.html" class="btn btn-outline btn-sm">Ver presenças</a>
+        </div>
+        <div id="tabela-baixa-freq">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursos | EduSystem</title>
+  <meta name="description" content="Gerenciamento de cursos e grade curricular">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item active"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">🎯 Cursos</div>
+        <div class="topbar-subtitle">Grade curricular e organização dos cursos</div>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalNovo()">+ Novo Curso</button>
+    </header>
+
+    <main class="content">
+      <div class="card mb-3">
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" id="input-busca" placeholder="Buscar por nome...">
+          </div>
+          <select class="form-control" id="filtro-status" style="width:140px">
+            <option value="">Todos</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="lista-cursos"><div class="loading"><div class="spinner"></div></div></div>
+    </main>
+  </div>
+
+  <!-- Modal Criar/Editar Curso -->
+  <div class="modal-overlay" id="modal-curso">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-titulo">Novo Curso</div>
+        <button class="modal-close" onclick="closeModal('modal-curso')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="curso-id">
+        <div class="form-group">
+          <label class="form-label">Nome do Curso *</label>
+          <input type="text" class="form-control" id="curso-nome" placeholder="Ex: Técnico em Informática">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descrição</label>
+          <input type="text" class="form-control" id="curso-descricao" placeholder="Breve descrição do curso...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duração (semestres)</label>
+          <input type="number" class="form-control" id="curso-duracao" min="1" max="20" placeholder="Ex: 4">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-curso')">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvarCurso()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Grade Curricular -->
+  <div class="modal-overlay" id="modal-grade">
+    <div class="modal" style="max-width:720px">
+      <div class="modal-header">
+        <div class="modal-title" id="grade-titulo">Grade Curricular</div>
+        <button class="modal-close" onclick="closeModal('modal-grade')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Tabs -->
+        <div class="flex gap-1 mb-3" style="border-bottom:1px solid var(--border);padding-bottom:12px">
+          <button class="btn btn-primary btn-sm" id="tab-grade-btn" onclick="mostrarTabGrade('grade')">📚 Grade Curricular</button>
+          <button class="btn btn-outline btn-sm" id="tab-turmas-btn" onclick="mostrarTabGrade('turmas')">🏫 Turmas Vinculadas</button>
+        </div>
+
+        <!-- Tab Grade -->
+        <div id="tab-grade">
+          <div style="background:var(--surface-2);border-radius:8px;padding:16px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-muted)">➕ Adicionar Matéria</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Matéria *</label>
+                <select class="form-control" id="grade-materia-select"><option value="">Selecionar...</option></select>
+              </div>
+              <div class="form-group" style="max-width:130px">
+                <label class="form-label">Semestre *</label>
+                <input type="number" class="form-control" id="grade-semestre" min="1" value="1" placeholder="1">
+              </div>
+              <div class="form-group" style="max-width:130px">
+                <label class="form-label">Tipo</label>
+                <select class="form-control" id="grade-obrigatoria">
+                  <option value="true">Obrigatória</option>
+                  <option value="false">Eletiva</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-success" onclick="adicionarMateriaGrade()">+ Adicionar à Grade</button>
+          </div>
+
+          <div id="lista-grade-materias"></div>
+        </div>
+
+        <!-- Tab Turmas -->
+        <div id="tab-turmas" class="hidden">
+          <div id="lista-turmas-curso"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-grade')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/cursos.js"></script>
+</body>
+</html>

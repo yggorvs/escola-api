@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presenças | EduSystem</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🎓</div><div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item active"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div><div class="topbar-title">✅ Presenças</div><div class="topbar-subtitle">Lançamento e controle de frequência</div></div>
+    </header>
+    <main class="content">
+      <!-- Filtros -->
+      <div class="card mb-3">
+        <div class="card-header"><div class="card-title">🔎 Filtrar Aula</div></div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Turma *</label>
+            <select class="form-control" id="sel-turma" onchange="onTurmaChange()">
+              <option value="">Selecionar turma...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Matéria *</label>
+            <select class="form-control" id="sel-materia" onchange="carregarListaPresenca()">
+              <option value="">Selecionar matéria...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data *</label>
+            <input type="date" class="form-control" id="sel-data" onchange="carregarListaPresenca()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de presença -->
+      <div class="card" id="card-presenca" style="display:none">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="presenca-titulo">Lista de Presença</div>
+            <div class="card-subtitle" id="presenca-subtitulo"></div>
+          </div>
+          <div class="flex gap-1">
+            <button class="btn btn-success btn-sm" onclick="marcarTodos(true)">✅ Todos Presentes</button>
+            <button class="btn btn-outline btn-sm" onclick="marcarTodos(false)">❌ Todos Ausentes</button>
+            <button class="btn btn-primary" onclick="salvarPresencas()" id="btn-salvar-presenca">💾 Salvar</button>
+          </div>
+        </div>
+        <div id="lista-presenca"></div>
+        <!-- Resumo -->
+        <div id="resumo-presenca" style="padding:16px;border-top:1px solid var(--border);display:flex;gap:16px;font-size:13px"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/presencas.js"></script>
+</body>
+</html>

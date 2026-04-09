@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turmas | EduSystem</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🎓</div><div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item active"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div><div class="topbar-title">🏫 Turmas</div><div class="topbar-subtitle">Gerenciar turmas, alunos e matérias</div></div>
+      <button class="btn btn-primary" onclick="abrirModalNova()">+ Nova Turma</button>
+    </header>
+    <main class="content">
+      <div id="lista-turmas"><div class="loading"><div class="spinner"></div></div></div>
+    </main>
+  </div>
+
+  <!-- Modal Turma -->
+  <div class="modal-overlay" id="modal-turma">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-titulo">Nova Turma</div>
+        <button class="modal-close" onclick="closeModal('modal-turma')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="turma-id">
+        <div class="form-group"><label class="form-label">Nome da Turma *</label>
+          <input type="text" class="form-control" id="turma-nome" placeholder="Ex: 3º Ano A"></div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Curso</label>
+          <select class="form-control" id="turma-curso">
+            <option value="">Sem curso vinculado</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Ano</label>
+            <input type="number" class="form-control" id="turma-ano" placeholder="2024"></div>
+          <div class="form-group"><label class="form-label">Semestre</label>
+            <select class="form-control" id="turma-semestre">
+              <option value="">Selecionar</option>
+              <option value="1º Semestre">1º Semestre</option>
+              <option value="2º Semestre">2º Semestre</option>
+              <option value="Anual">Anual</option>
+            </select></div>
+          <div class="form-group"><label class="form-label">Período</label>
+            <select class="form-control" id="turma-periodo">
+              <option value="">Selecionar</option>
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noite">Noite</option>
+              <option value="Integral">Integral</option>
+            </select></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-turma')">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvarTurma()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Gerenciar Turma -->
+  <div class="modal-overlay" id="modal-gerenciar">
+    <div class="modal" style="max-width:700px">
+      <div class="modal-header">
+        <div class="modal-title" id="gerenciar-titulo">Gerenciar Turma</div>
+        <button class="modal-close" onclick="closeModal('modal-gerenciar')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Tabs -->
+        <div class="flex gap-1 mb-3" style="border-bottom:1px solid var(--border);padding-bottom:12px">
+          <button class="btn btn-primary btn-sm" id="tab-alunos-btn" onclick="mostrarTab('alunos')">🎒 Alunos</button>
+          <button class="btn btn-outline btn-sm" id="tab-materias-btn" onclick="mostrarTab('materias')">📚 Matérias</button>
+        </div>
+        <div id="tab-alunos">
+          <div class="flex gap-2 mb-2">
+            <select class="form-control" id="select-aluno-add"><option value="">Selecionar aluno...</option></select>
+            <button class="btn btn-success" onclick="adicionarAluno()">+ Adicionar</button>
+          </div>
+          <div id="lista-alunos-turma"></div>
+        </div>
+        <div id="tab-materias" class="hidden">
+          <div class="form-row mb-2">
+            <select class="form-control" id="select-materia-add"><option value="">Selecionar matéria...</option></select>
+            <select class="form-control" id="select-prof-add"><option value="">Professor (opcional)...</option></select>
+          </div>
+          <button class="btn btn-success mb-2" onclick="adicionarMateria()">+ Adicionar Matéria</button>
+          <div id="lista-materias-turma"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-gerenciar')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/turmas.js"></script>
+</body>
+</html>

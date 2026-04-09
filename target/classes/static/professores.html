@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professores | EduSystem</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item active"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">👨‍🏫 Professores</div>
+        <div class="topbar-subtitle">Gestão de professores e funcionários</div>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalNovo()">+ Novo Professor</button>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <div class="search-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" id="input-busca" placeholder="Buscar por nome...">
+          </div>
+        </div>
+        <div id="tabela-professores"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-professor">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-titulo">Novo Professor</div>
+        <button class="modal-close" onclick="closeModal('modal-professor')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="prof-id">
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Nome Completo *</label>
+            <input type="text" class="form-control" id="prof-nome" placeholder="Ex: Maria Santos">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CPF</label>
+            <input type="text" class="form-control" id="prof-cpf" placeholder="000.000.000-00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Especialidade</label>
+            <input type="text" class="form-control" id="prof-especialidade" placeholder="Ex: Matemática">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="prof-email" placeholder="professor@escola.edu">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefone</label>
+            <input type="text" class="form-control" id="prof-telefone" placeholder="(11) 99999-9999">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-professor')">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvarProfessor()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/professores.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matérias | EduSystem</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🎓</div><div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item active"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div><div class="topbar-title">📚 Matérias</div><div class="topbar-subtitle">Disciplinas e carga horária</div></div>
+      <button class="btn btn-primary" onclick="abrirModal()">+ Nova Matéria</button>
+    </header>
+    <main class="content">
+      <div class="card">
+        <div id="tabela-materias"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </main>
+  </div>
+  <div class="modal-overlay" id="modal-materia">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-titulo">Nova Matéria</div>
+        <button class="modal-close" onclick="closeModal('modal-materia')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="mat-id">
+        <div class="form-group">
+          <label class="form-label">Nome da Matéria *</label>
+          <input type="text" class="form-control" id="mat-nome" placeholder="Ex: Matemática">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Código</label>
+            <input type="text" class="form-control" id="mat-codigo" placeholder="MAT01">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Carga Horária (h)</label>
+            <input type="number" class="form-control" id="mat-carga" placeholder="80">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descrição</label>
+          <input type="text" class="form-control" id="mat-descricao" placeholder="Descrição opcional...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-materia')">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvar()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/materias.js"></script>
+</body>
+</html>

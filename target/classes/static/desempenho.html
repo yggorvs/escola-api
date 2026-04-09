@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desempenho | EduSystem</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🎓</div><div class="logo-text"><h1>EduSystem</h1><span>Gestão Escolar</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+      <div class="nav-section-title">Cadastros</div>
+      <a href="alunos.html" class="nav-item"><span class="nav-icon">🎒</span> Alunos</a>
+      <a href="professores.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Professores</a>
+      <a href="materias.html" class="nav-item"><span class="nav-icon">📚</span> Matérias</a>
+      <a href="cursos.html" class="nav-item"><span class="nav-icon">🎯</span> Cursos</a>
+      <a href="turmas.html" class="nav-item"><span class="nav-icon">🏫</span> Turmas</a>
+      <div class="nav-section-title">Lançamentos</div>
+      <a href="presencas.html" class="nav-item"><span class="nav-icon">✅</span> Presenças</a>
+      <a href="desempenho.html" class="nav-item active"><span class="nav-icon">📝</span> Desempenho</a>
+    </nav>
+  </aside>
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div><div class="topbar-title">📝 Desempenho</div><div class="topbar-subtitle">Lançamento e acompanhamento de notas</div></div>
+      <button class="btn btn-primary" onclick="openModal('modal-nota')">+ Lançar Nota</button>
+    </header>
+    <main class="content">
+      <!-- Filtros -->
+      <div class="card mb-3">
+        <div class="card-header"><div class="card-title">🔎 Filtrar</div></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Turma</label>
+            <select class="form-control" id="filtro-turma" onchange="onFiltroTurmaChange()">
+              <option value="">Todas as turmas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Matéria</label>
+            <select class="form-control" id="filtro-materia" onchange="carregarNotas()">
+              <option value="">Todas as matérias</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de notas -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Notas Lançadas</div>
+        </div>
+        <div id="tabela-notas"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Lançar Nota -->
+  <div class="modal-overlay" id="modal-nota">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="nota-titulo">Lançar Nota</div>
+        <button class="modal-close" onclick="closeModal('modal-nota')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="nota-id">
+        <div class="form-group">
+          <label class="form-label">Turma *</label>
+          <select class="form-control" id="nota-turma" onchange="onModalTurmaChange()">
+            <option value="">Selecionar turma...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Matéria *</label>
+          <select class="form-control" id="nota-turmamateriaId">
+            <option value="">Selecionar matéria...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Aluno *</label>
+          <select class="form-control" id="nota-aluno">
+            <option value="">Selecionar aluno...</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nota (0-10) *</label>
+            <input type="number" class="form-control" id="nota-valor" min="0" max="10" step="0.1" placeholder="7.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-control" id="nota-tipo">
+              <option value="">Selecionar...</option>
+              <option>Prova 1</option>
+              <option>Prova 2</option>
+              <option>Trabalho</option>
+              <option>Apresentação</option>
+              <option>Participação</option>
+              <option>Recuperação</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Data</label>
+            <input type="date" class="form-control" id="nota-data">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descrição</label>
+            <input type="text" class="form-control" id="nota-descricao" placeholder="Observações...">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-nota')">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar-nota" onclick="salvarNota()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/api.js"></script>
+  <script src="js/desempenho.js"></script>
+</body>
+</html>
